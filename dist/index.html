@@ -11,19 +11,28 @@
 </head>
 <body>
     <h1>Book Cloud</h1>
-        <div class="content">
-            <form id="add-book-form">
-                <label for="name">Title: </label>
-                <input type="text" name="title">
-                <label for="city">Author: </label>
-                <input type="text" name="author">
-                <button>Add Book</button>
-                <!-- <input type="submit" class="button"> -->
-            </form>
-            <ul id="books-list"></ul>
-        </div>
+    <div class="container">
+      <div class="content">
+        <form id="add-book-form">
+            <input type="text" name="title" placeholder="Title">
+            <input type="text" name="author" placeholder="Author">
+            <button class="add-button">Add</button>
+            <!-- <input type="submit" class="button"> -->
+        </form>
+        <ul id="books-list"></ul>
+      </div>
+      <!-- <div class="content">
+        <form id="add-book-form">
+            <input type="text" name="title" placeholder="Title">
+            <input type="text" name="author" placeholder="Author">
+            <button>Add</button>
+        </form>
+        <ul id="books-list">
+          <li><span>Title</span><span>author</span></li>
+        </ul>
+      </div> -->
 
-
+    </div>
     <script src="./bundle.js"></script>
 </body>
 </html>

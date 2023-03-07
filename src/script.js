@@ -2,8 +2,9 @@ import { initializeApp } from 'firebase/app';
 import { 
   getFirestore, collection, onSnapshot,
   addDoc, deleteDoc, doc,
-  query, where, orderBy, serverTimestamp,
-  getDoc
+  query, where, orderBy,
+  getDoc, 
+  updateDoc
 } from 'firebase/firestore';
 
 const booksList = document.querySelector('#books-list');
@@ -18,81 +19,63 @@ const firebaseConfig = {
     measurementId: "G-MXR81VZZXT"
   };
 
-initializeApp(firebaseConfig);
 
-const db = getFirestore();
-
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const colRef = collection(db, 'Cafes');
 
-const q = query(colRef, orderBy('createdAt'))
-
-//Get collection data
-// getDocs(colRef)
-//   .then((snapshot) => {
-//     let cafes = [];
-//     snapshot.docs.forEach((doc) => {
-//       cafes.push({...doc.data( ), id: doc.id})
-//     })
-
-//     console.log(cafes)
-//   })
-//   .catch(err => {
-//     console.log(err.massage);
-//   })
-
-
-//Get real time collection data
-onSnapshot(q, (snapshot) => {
-  let books = [];
-       snapshot.docs.forEach((doc) => {
-         books.push({...doc.data( ), id: doc.id})
-         renderBooksList(doc);
-       })
-  
-       console.log(books)
-})
-
-
-//Add Cafe
+//Add Item
 const addBookForm = document.querySelector('#add-book-form');
 addBookForm.addEventListener('submit', (e) => {
   e.preventDefault();
-
-  addDoc(colRef, {
-    title: addBookForm.title.value,
-    author: addBookForm.author.value,
-    createdAt: serverTimestamp()
-  })
-  .then(() => addBookForm.reset())
+  if(addBookForm.title.value) {
+    addDoc(colRef, {
+      title: addBookForm.title.value,
+      author: addBookForm.author.value
+    })
+    .then(() => {
+      addBookForm.reset();
+     
+    })
+  } else {
+    alert('There is no book entered!!!')
+  }
 })
 
 
-//Delete Cafe 
-// const deleteCafe = document.querySelector('#deleteCafe');
-// deleteCafe.addEventListener('click', (e) => {
-//   e.preventDefault();
-
-//   const docRef = doc(db, "Cafes", blank.id.value);
-//   deleteDoc(docRef)
-//   .then(() => {
-//     jnjel listi mejic et field@
-//   })
-// })
-
-
-function renderBooksList(doc) {
-  let li = document.createElement('li');
-  let title = document.createElement('span');
-  let author = document.createElement('span');
-
-  li.setAttribute('data-id', doc.id);
-  title.textContent = doc.data().title;
-  author.textContent = doc.data().author;
-
-  li.appendChild(title);
-  li.appendChild(author);
-
-  booksList.appendChild(li)
-
+//Get Items
+function getItems() {
+  onSnapshot(colRef, (snapshot) => {
+    let items = [];
+    snapshot.docs.forEach((doc) => {
+      items.push({
+        id: doc.id,
+        ...doc.data()})
+    })
+    generateItems(items);
+  })
 }
+
+getItems()
+
+//Show Items in page
+function generateItems(items) {
+  function deleteItem() {
+    console.log('delete');
+  }
+  let booksList = document.querySelector('#books-list')
+  let htmlItems = '';
+  items.forEach((item) => {
+    htmlItems += `<li data-id="${item.id}">
+                    <div class="span-container">
+                      <span>${item.title}</span>
+                      <span>${item.author}</span>
+                    </div>
+                    <button class="delete" onClick="deleteItem()">Delete</button>
+                  </li>`;
+    booksList.innerHTML = htmlItems;
+  })
+}
+
+
 
